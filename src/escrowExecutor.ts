@@ -15,11 +15,19 @@ export class EscrowExecutor {
     xrpl_address:string = process.env.XRPL_ADDRESS || 'rpzR63sAd7fc4tR9c8k6MR3xhcZSpTAYKm';
     xrpl_secret:string = process.env.XRPL_SECRET || 'sskorjvv5bPtydsm5HtU1f2YxxA6D';
 
-    api:RippleAPI = new RippleAPI({server: this.server, proxy: config.USE_PROXY ? config.PROXY_URL : null});
+    api:RippleAPI;
     api_test:RippleAPI = new RippleAPI({server: this.server_test, proxy: config.USE_PROXY ? config.PROXY_URL : null});
     db:DB = new DB();
 
     public async init() {
+        if(config.USE_PROXY) {
+            this.api = new RippleAPI({server: this.server, proxy: config.USE_PROXY ? config.PROXY_URL : null});
+            this.api_test = new RippleAPI({server: this.server_test, proxy: config.USE_PROXY ? config.PROXY_URL : null});
+        } else {
+            this.api = new RippleAPI({server: this.server});
+            this.api_test = new RippleAPI({server: this.server_test});
+        }
+        
         await this.db.initDb("escrowExecutor");
         await this.db.ensureIndexes();
         scheduler.scheduleJob({minute: 5}, () => this.loadEscrowsFromDbAndExecute());
