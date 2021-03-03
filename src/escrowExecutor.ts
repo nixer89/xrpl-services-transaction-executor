@@ -22,36 +22,14 @@ export class EscrowExecutor {
     public async init() {
         await this.db.initDb("escrowExecutor");
         await this.db.ensureIndexes();
-        scheduler.scheduleJob({minute: 5}, () => this.loadEscrowsFromDbAndExecute())
-        scheduler.scheduleJob({minute: 15}, () => this.loadEscrowsFromDbAndExecute())
+        scheduler.scheduleJob({minute: 5}, () => this.loadEscrowsFromDbAndExecute());
     }
 
     public async addNewEscrow(escrow: EscrowFinish): Promise<any> {
-        if(Date.now() > escrow.finishAfter.getTime()) {
-            //execute straight away
-            await this.executeEscrowFinish(escrow);
-            return {success: true};
-        }
-
-        let currentDate:Date = new Date();
-        currentDate.setHours(currentDate.getHours()+1)
-        currentDate.setMinutes(0,0,0);
-
-        //check if it is within the next hour
-        if(currentDate.getTime() > escrow.finishAfter.getTime()) {
-            //if within the next hour, schedule it right away
-            let executionTime:Date = escrow.finishAfter;
-            executionTime.setMinutes(executionTime.getMinutes()+1)
-
-            scheduler.scheduleJob(executionTime, () => this.executeEscrowFinish(escrow));
-            return {success: true};
-        } else {
-            return this.db.saveEscrow(escrow);
-        }
+        return this.db.saveEscrow(escrow);
     }
 
     public async deleteEscrow(escrow: EscrowFinish): Promise<boolean> {
-        console.log("trying to delete escrow: " + JSON.stringify(escrow));
         return this.db.deleteEscrowFinish(escrow.account, escrow.sequence, escrow.testnet);
     }
 
@@ -61,9 +39,7 @@ export class EscrowExecutor {
 
     private async loadEscrowsFromDbAndExecute(): Promise<void> {
         //load escrows which had to be executed within the last our and execute them now
-        let startDate:Date = new Date();
-        startDate.setHours(startDate.getHours()-1);
-        startDate.setMinutes(0,0,0);
+        let startDate:Date = new Date(0);
 
         let endDate:Date = new Date();
         endDate.setHours(endDate.getHours()-1);
