@@ -1,7 +1,7 @@
 {
-  "name": "xrpl-escrow-executer",
-  "version": "1.0.2",
-  "description": "executes XRPL timelocked escrows based on a list of escrows",
+  "name": "xumm-community-transaction-executor",
+  "version": "1.0.0",
+  "description": "executes XRPL timelocked escrows based on a database of escrows",
   "main": "src/server.ts",
   "scripts": {
     "start": "node dist/server.js",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nixer89/xrpl-escrow-executer.git"
+    "url": "git+https://github.com/nixer89/xumm-community-transaction-executor.git"
   },
   "author": "nixerFFM",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/nixer89/xrpl-escrow-executer/issues"
+    "url": "https://github.com/nixer89/xumm-community-transaction-executor/issues"
   },
-  "homepage": "https://github.com/nixer89/xrpl-escrow-executer#readme",
+  "homepage": "https://github.com/nixer89/xumm-community-transaction-executor#readme",
   "dependencies": {
     "console-stamp": "^0.2.9",
     "fastify": "^2.15.3",
