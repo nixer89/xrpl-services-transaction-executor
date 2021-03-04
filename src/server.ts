@@ -44,7 +44,7 @@ const start = async () => {
       console.log("finished declaring routes");
 
       try {
-        await fastify.listen(4011, '0.0.0.0');
+        await fastify.listen(4011, '127.0.0.1');
 
         console.log("http://localhost:4011/");
 
