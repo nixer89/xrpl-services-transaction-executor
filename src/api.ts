@@ -16,7 +16,7 @@ export async function registerRoutes(fastify, opts, next) {
             return {success: false, error: true, message: "Please provide a body"};
         else {
             let parsedBody:any = JSON.parse(request.body);
-            console.log("parsed body: " + JSON.stringify(parsedBody));
+            console.log("parsed body: " + parsedBody);
 
             if(!parsedBody.account || !parsedBody.sequence || !parsedBody.finishafter || !parsedBody.testnet)
                 return { success : false, error: true, message: "Post body incomplete. Please provide 'account', 'sequence', 'finishafter' and 'testnet' properties"};
