@@ -10,7 +10,7 @@ require('console-stamp')(console, { pattern: 'yyyy-mm-dd HH:MM:ss' });
 
 export class EscrowExecutor {
 
-    server:string = 'wss://xrpl.ws';
+    server:string = 'wss://xrplcluster.com';
     server_test:string ='wss://s.altnet.rippletest.net';
     xrpl_address:string = process.env.XRPL_ADDRESS || 'rpzR63sAd7fc4tR9c8k6MR3xhcZSpTAYKm';
     xrpl_secret:string = process.env.XRPL_SECRET || 'sskorjvv5bPtydsm5HtU1f2YxxA6D';

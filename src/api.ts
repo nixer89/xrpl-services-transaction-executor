@@ -31,10 +31,11 @@ export async function registerRoutes(fastify, opts, next) {
                         testnet: parsedBody.testnet
                     };
                     
-                    return escrowExecutor.addNewEscrow(escrowFinish);
+                    let success = await  escrowExecutor.addNewEscrow(escrowFinish);
+                    return { success: success, error: false }
                     
                 } catch {
-                    return { success : false, error: true, message: 'Something went wrong. Please check your request'};
+                    return { success : false, error: true, message: 'Something went wrong. Could not save Escrow.'};
                 }
             }
         }
@@ -59,7 +60,7 @@ export async function registerRoutes(fastify, opts, next) {
                 let success:boolean = await escrowExecutor.deleteEscrow(escrowToDelete);
                 return { success: success, error: false }
             } catch {
-                return { success : false, error: true, message: 'Something went wrong. Please check your request'};
+                return { success : false, error: true, message: 'Something went wrong. Could not delete Escrow'};
             }
         }
     });
@@ -86,7 +87,7 @@ export async function registerRoutes(fastify, opts, next) {
                     };
                 } catch {
                     console.log("ERROR");
-                    return { success : false, error: true, message: 'Something went wrong. Please check your request'};
+                    return { success : false, error: true, message: 'Something went wrong. Could not get Escrows.'};
                 }
             }
         }
