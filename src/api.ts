@@ -16,9 +16,8 @@ export async function registerRoutes(fastify, opts, next) {
             return {success: false, error: true, message: "Please provide a body"};
         else {
             let parsedBody:any = JSON.parse(request.body);
-            console.log("parsed body: " + parsedBody);
 
-            if(!parsedBody.account || !parsedBody.sequence || !parsedBody.finishafter || !parsedBody.testnet)
+            if(!parsedBody.account || !parsedBody.sequence || !parsedBody.finishafter || (!parsedBody.testnet || parsedBody.testnet != false))
                 return { success : false, error: true, message: "Post body incomplete. Please provide 'account', 'sequence', 'finishafter' and 'testnet' properties"};
             else if(!isValidXRPAddress(parsedBody.account))
                 return { success : false, error: true, message: "Invalid XRP Ledger account address. Can not accept your request."};
