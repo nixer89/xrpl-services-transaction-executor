@@ -11,14 +11,15 @@ export async function registerRoutes(fastify, opts, next) {
 
     fastify.post('/api/v1/escrowFinish', async (request, reply) => {
         //console.log("post payload headers: " + JSON.stringify(request.headers));
-        //console.log("post body escrowFinish: " + JSON.stringify(request.body));
+        console.log("post body escrowFinish: " + request.body);
         if(!request.body)
             return {success: false, error: true, message: "Please provide a body"};
         else {
             let parsedBody:any = JSON.parse(request.body);
+            console.log("parsed body: " + JSON.stringify(parsedBody));
 
             if(!parsedBody.account || !parsedBody.sequence || !parsedBody.finishafter || !parsedBody.testnet)
-                return { success : false, error: true, message: "Post body incomplete. Please provide 'account', 'sequence', 'finishAfter' and 'testnet' properties"};
+                return { success : false, error: true, message: "Post body incomplete. Please provide 'account', 'sequence', 'finishafter' and 'testnet' properties"};
             else if(!isValidXRPAddress(parsedBody.account))
                 return { success : false, error: true, message: "Invalid XRP Ledger account address. Can not accept your request."};
             else {
@@ -27,7 +28,7 @@ export async function registerRoutes(fastify, opts, next) {
                     let escrowFinish:EscrowFinish = {
                         account: parsedBody.account,
                         sequence: parsedBody.sequence,
-                        finishAfter: new Date(parsedBody.finishafter),
+                        finishafter: new Date(parsedBody.finishafter),
                         testnet: parsedBody.testnet
                     };
                     
@@ -53,7 +54,7 @@ export async function registerRoutes(fastify, opts, next) {
                 let escrowToDelete:EscrowFinish = {
                     account: request.params.account,
                     sequence: Number(request.params.sequence),
-                    finishAfter: null,
+                    finishafter: null,
                     testnet: request.params.testnet == 'true'
                 };
 

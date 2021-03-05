@@ -1,6 +1,6 @@
 export interface EscrowFinish {
     account: string,
     sequence: number,
-    finishAfter: Date,
+    finishafter: Date,
     testnet: boolean
 }

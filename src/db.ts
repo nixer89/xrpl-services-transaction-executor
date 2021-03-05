@@ -37,7 +37,7 @@ export class DB {
     async getEscrowFinishByAccount(account: string, testnet: boolean): Promise<EscrowFinish[]> {
         try {
             console.log("[DB]: getEscrowFinishByAccount: account: " + account);
-            let mongoResult:EscrowFinish[] = await this.escrowFinishCollection.find({account: account, testnet}).sort({finishAfter: -1}).toArray();
+            let mongoResult:EscrowFinish[] = await this.escrowFinishCollection.find({account: account, testnet}).sort({finishafter: -1}).toArray();
 
             if(mongoResult)
                 return mongoResult;
@@ -52,7 +52,7 @@ export class DB {
     async getEscrowFinishByDates(startDate:Date, endDate:Date): Promise<EscrowFinish[]> {
         try {
             console.log("[DB]: getEscrowFinishByDates: startDate: " + startDate.toLocaleString() + " endDate: " + endDate.toLocaleString());
-            let mongoResult:EscrowFinish[] = await this.escrowFinishCollection.find({$and: [ {finishAfter: {$gte: startDate}}, {finishAfter: {$lt: endDate}}]}).sort({finishAfter: -1}).toArray();
+            let mongoResult:EscrowFinish[] = await this.escrowFinishCollection.find({$and: [ {finishafter: {$gte: startDate}}, {finishafter: {$lt: endDate}}]}).sort({finishafter: -1}).toArray();
 
             if(mongoResult)
                 return mongoResult;
@@ -106,7 +106,7 @@ export class DB {
                 await this.escrowFinishCollection.dropIndexes();
 
             await this.escrowFinishCollection.createIndex({account: -1});
-            await this.escrowFinishCollection.createIndex({finishAfter: -1});
+            await this.escrowFinishCollection.createIndex({finishafter: -1});
 
         } catch(err) {
             console.log("ERR creating indexes");
