@@ -90,9 +90,10 @@ export class EscrowExecutor {
 
             console.log("submitting escrowFinish transaction")
             let result:FormattedSubmitResponse = await apiToUse.submit(signedEscrowFinish.signedTransaction);
+            console.log("submitting result: " + JSON.stringify(result));
 
             if(apiToUse.isConnected)
-                apiToUse.disconnect();
+                await apiToUse.disconnect();
                 
             if(!result || "tesSUCCESS" != result.resultCode) {
                 if(result && "tecNO_TARGET" == result.resultCode) {
@@ -103,9 +104,9 @@ export class EscrowExecutor {
                     return this.executeEscrowFinish(escrow, true);
                 else
                     return Promise.resolve(false);
+            } else {
+                return Promise.resolve(true);
             }
-
-            return Promise.resolve(true);
         } catch(err) {
             console.log(err);
             return Promise.resolve(false);

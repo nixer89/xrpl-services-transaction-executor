@@ -19,14 +19,14 @@ export class DB {
     async saveEscrow(escrow: EscrowFinish): Promise<any> {
         console.log("[DB]: saveEscrow:" + " escrow: " + JSON.stringify(escrow));
         try {
-            if((await this.escrowFinishCollection.find(escrow).toArray()).length == 0) {
+            if((await this.escrowFinishCollection.find({account: escrow.account, sequence: escrow.sequence, testnet: escrow.testnet}).toArray()).length == 0) {
                 let insertResponse = await this.escrowFinishCollection.insertOne(escrow);
                 if(insertResponse.insertedCount == 1 && insertResponse.insertedId)
                     return {success: true};
                 else
                     return {success: false};
             } else {
-                return {success: false};
+                return {success: true}; //Escrow already in system
             }
         } catch(err) {
             console.log("[DB]: error saveEscrow");
@@ -67,7 +67,7 @@ export class DB {
     async deleteEscrowFinish(account: string, sequence: number, testnet: boolean): Promise<boolean> {
         console.log("[DB]: deleteEscrowFinish: account: " + account + " and sequence: " + sequence + " and testnet: " + testnet);
         try {
-            let deleteResult:DeleteWriteOpResultObject = await this.escrowFinishCollection.deleteOne({account: account, sequence: sequence, testnet: testnet});
+            let deleteResult:DeleteWriteOpResultObject = await this.escrowFinishCollection.deleteMany({account: account, sequence: sequence, testnet: testnet});
             console.log("deleteResult: " + JSON.stringify(deleteResult));
             return deleteResult && deleteResult.deletedCount >= 1;
         } catch(err) {
