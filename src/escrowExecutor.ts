@@ -96,8 +96,8 @@ export class EscrowExecutor {
                 await apiToUse.disconnect();
                 
             if(!result || "tesSUCCESS" != result.resultCode) {
-                if(result && "tecNO_TARGET" == result.resultCode) {
-                    //escrow does not exist anymore
+                if(result && ("tecNO_TARGET" == result.resultCode || "tecNO_PERMISSION"  == result.resultCode)) {
+                    //escrow does not exist anymore or cannot be finished (has condition or can only be cancelled)
                     return Promise.resolve(true);
                 }
                 else if(!retry)
