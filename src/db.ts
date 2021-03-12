@@ -34,10 +34,22 @@ export class DB {
         }
     }
 
+    async escrowExists(escrow: EscrowFinish): Promise<boolean> {
+        try {
+            console.log("[DB]: getEscrow: " + JSON.stringify(escrow));
+            let mongoResult:EscrowFinish = await this.escrowFinishCollection.findOne({account: escrow.account, sequence: escrow.sequence, testnet: escrow.testnet});
+
+            return mongoResult && mongoResult.account == escrow.account && mongoResult.sequence == escrow.sequence && mongoResult.testnet == escrow.testnet;
+        } catch(err) {
+            console.log("[DB]: error getEscrow");
+            console.log(JSON.stringify(err));
+        }
+    }
+
     async getEscrowFinishByAccount(account: string, testnet: boolean): Promise<EscrowFinish[]> {
         try {
             console.log("[DB]: getEscrowFinishByAccount: account: " + account);
-            let mongoResult:EscrowFinish[] = await this.escrowFinishCollection.find({account: account, testnet}).sort({finishafter: -1}).toArray();
+            let mongoResult:EscrowFinish[] = await this.escrowFinishCollection.find({account: account, testnet: testnet}).sort({finishafter: -1}).toArray();
 
             if(mongoResult)
                 return mongoResult;

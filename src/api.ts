@@ -65,6 +65,30 @@ export async function registerRoutes(fastify, opts, next) {
         }
     });
 
+    fastify.get('/api/v1/escrowFinish/exists/:account/:sequence/:testnet', async (request, reply) => {
+        //console.log("delete params: " + JSON.stringify(request.params));
+        if(!request.params || !request.params.account || !request.params.sequence || !request.params.testnet) {
+            return { success : false, error: true, message: "Params incomplete. Please provide at least 'account', 'sequence' and 'testnet' properties"};
+        } else if(!isValidXRPAddress(request.params.account)) {
+            return { success : false, error: true, message: "Invalid XRP Ledger account address. Can not accept your request."};
+        } else {
+            //console.log("go on and delete");
+            try {
+                let escrowToFind:EscrowFinish = {
+                    account: request.params.account,
+                    sequence: Number(request.params.sequence),
+                    finishafter: null,
+                    testnet: request.params.testnet == 'true'
+                };
+
+                let exsists:boolean = await escrowExecutor.escrowExists(escrowToFind);
+                return { success: exsists, error: false }
+            } catch {
+                return { success : false, error: true, message: 'Escrow not found'};
+            }
+        }
+    });
+
     fastify.post('/api/v1/escrows', async (request, reply) => {
         //console.log("body params escrow backend: " + request.body);
         if(!request.body) {

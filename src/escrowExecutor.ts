@@ -41,6 +41,10 @@ export class EscrowExecutor {
         return this.db.deleteEscrowFinish(escrow.account, escrow.sequence, escrow.testnet);
     }
 
+    public async escrowExists(escrow: EscrowFinish): Promise<boolean> {
+        return this.db.escrowExists(escrow);
+    }
+
     public async getEscrowsForAccount(account: string, testnet: boolean): Promise<EscrowFinish[]> {
         return this.db.getEscrowFinishByAccount(account, testnet);
     }
