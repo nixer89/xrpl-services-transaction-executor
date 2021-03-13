@@ -26,6 +26,7 @@ export class DB {
                 else
                     return {success: false};
             } else {
+                console.log("escrow already in the system!");
                 return {success: true}; //Escrow already in system
             }
         } catch(err) {
