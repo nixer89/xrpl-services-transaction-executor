@@ -40,7 +40,9 @@ export class DB {
             console.log("[DB]: getEscrow: " + JSON.stringify(escrow));
             let mongoResult:EscrowFinish = await this.escrowFinishCollection.findOne({account: escrow.account, sequence: escrow.sequence, testnet: escrow.testnet});
 
-            return mongoResult && mongoResult.account == escrow.account && mongoResult.sequence == escrow.sequence && mongoResult.testnet == escrow.testnet;
+            if(mongoResult && mongoResult.account == escrow.account && mongoResult.sequence == escrow.sequence && mongoResult.testnet == escrow.testnet)
+                return Promise.resolve(true);
+            else return Promise.resolve(false);
         } catch(err) {
             console.log("[DB]: error getEscrow");
             console.log(JSON.stringify(err));
