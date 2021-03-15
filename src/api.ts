@@ -31,8 +31,8 @@ export async function registerRoutes(fastify, opts, next) {
                         testnet: parsedBody.testnet
                     };
                     
-                    let success = await  escrowExecutor.addNewEscrow(escrowFinish);
-                    return { success: success, error: false }
+                    let result = await escrowExecutor.addNewEscrow(escrowFinish);
+                    return { success: result.success, error: false }
                     
                 } catch {
                     return { success : false, error: true, message: 'Something went wrong. Could not save Escrow.'};
