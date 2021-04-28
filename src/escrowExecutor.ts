@@ -54,8 +54,7 @@ export class EscrowExecutor {
         let startDate:Date = new Date(0);
 
         let endDate:Date = new Date();
-        endDate.setHours(endDate.getHours()-1);
-        endDate.setMinutes(59, 59, 999);
+        endDate.setMinutes(3, 59, 999);
 
         let escrows:EscrowFinish[] = await this.db.getEscrowFinishByDates(startDate, endDate);
 
