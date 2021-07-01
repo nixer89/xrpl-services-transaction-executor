@@ -120,7 +120,7 @@ export class EscrowExecutor {
         return this.db.getCurrentEscrowCount();
     }
 
-    public getNextEscrowRelease(): Promise<number> {
-        return this.db.getNextExecutionDate();
+    public getNextOrLastEscrowRelease(sort: number): Promise<number> {
+        return this.db.getNextOrLastEscrowRelease(sort);
     }
 }

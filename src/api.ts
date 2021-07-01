@@ -129,7 +129,16 @@ export async function registerRoutes(fastify, opts, next) {
     fastify.get('/api/v1/stats/nextRelease', async (request, reply) => {
         //console.log("stats/currentCount");
         try {
-            return escrowExecutor.getNextEscrowRelease();
+            return escrowExecutor.getNextOrLastEscrowRelease(1);
+        } catch {
+            return -1;
+        }
+    });
+
+    fastify.get('/api/v1/stats/lastRelease', async (request, reply) => {
+        //console.log("stats/currentCount");
+        try {
+            return escrowExecutor.getNextOrLastEscrowRelease(-1);
         } catch {
             return -1;
         }

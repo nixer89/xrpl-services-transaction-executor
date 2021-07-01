@@ -96,18 +96,18 @@ export class DB {
         }
     }
 
-    async getNextExecutionDate(): Promise<number> {
+    async getNextOrLastEscrowRelease(sort: number): Promise<number> {
         try {
-            console.log("[DB]: getNextExecutionDate");
-            let mongoResult:EscrowFinish[] = await this.escrowFinishCollection.find().sort({finishafter: -1}).toArray();
+            console.log("[DB]: getNextOrLastEscrowRelease");
+            let mongoResult:EscrowFinish[] = await this.escrowFinishCollection.find().sort({finishafter: sort}).toArray();
 
-            console.log("result: " + JSON.stringify(mongoResult));
+            //console.log("result: " + JSON.stringify(mongoResult));
             if(mongoResult && mongoResult.length > 0)
                 return mongoResult[0].finishafter.getTime();
             else
                 return -1;
         } catch(err) {
-            console.log("[DB]: error getNextExecutionDate");
+            console.log("[DB]: error getNextOrLastEscrowRelease");
             console.log(JSON.stringify(err));
             return -1;
         }
