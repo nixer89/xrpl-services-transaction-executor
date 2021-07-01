@@ -116,6 +116,24 @@ export async function registerRoutes(fastify, opts, next) {
             }
         }
     });
+
+    fastify.get('/api/v1/stats/currentCount', async (request, reply) => {
+        //console.log("stats/currentCount");
+        try {
+            return escrowExecutor.getCurrentEscrowCount();
+        } catch {
+            return -1;
+        }
+    });
+
+    fastify.get('/api/v1/stats/nextRelease', async (request, reply) => {
+        //console.log("stats/currentCount");
+        try {
+            return escrowExecutor.getNextEscrowRelease();
+        } catch {
+            return -1;
+        }
+    });
     
     next()
 

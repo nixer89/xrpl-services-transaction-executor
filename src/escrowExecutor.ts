@@ -115,4 +115,12 @@ export class EscrowExecutor {
             return Promise.resolve(false);
         }
     }
+
+    public getCurrentEscrowCount(): Promise<number> {
+        return this.db.getCurrentEscrowCount();
+    }
+
+    public getNextEscrowRelease(): Promise<number> {
+        return this.db.getNextExecutionDate();
+    }
 }

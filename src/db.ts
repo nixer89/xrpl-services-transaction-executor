@@ -32,6 +32,7 @@ export class DB {
         } catch(err) {
             console.log("[DB]: error saveEscrow");
             console.log(JSON.stringify(err));
+            return null;
         }
     }
 
@@ -46,6 +47,7 @@ export class DB {
         } catch(err) {
             console.log("[DB]: error getEscrow");
             console.log(JSON.stringify(err));
+            return Promise.resolve(false);
         }
     }
 
@@ -61,6 +63,7 @@ export class DB {
         } catch(err) {
             console.log("[DB]: error getEscrowFinishByAccount");
             console.log(JSON.stringify(err));
+            return null;
         }
     }
 
@@ -76,6 +79,7 @@ export class DB {
         } catch(err) {
             console.log("[DB]: error getEscrowFinishByDates");
             console.log(JSON.stringify(err));
+            return null;
         }
     }
 
@@ -88,6 +92,35 @@ export class DB {
         } catch(err) {
             console.log("[DB]: error deleteEscrowFinish");
             console.log(JSON.stringify(err));
+            return false;
+        }
+    }
+
+    async getNextExecutionDate(): Promise<number> {
+        try {
+            console.log("[DB]: getNextExecutionDate");
+            let mongoResult:EscrowFinish[] = await this.escrowFinishCollection.find().sort({finishafter: -1}).toArray();
+
+            console.log("result: " + JSON.stringify(mongoResult));
+            if(mongoResult && mongoResult.length > 0)
+                return mongoResult[0].finishafter.getTime();
+            else
+                return -1;
+        } catch(err) {
+            console.log("[DB]: error getNextExecutionDate");
+            console.log(JSON.stringify(err));
+            return -1;
+        }
+    }
+
+    async getCurrentEscrowCount(): Promise<number> {
+        try {
+            console.log("[DB]: getCurrentEscrowCount");
+            return this.escrowFinishCollection.countDocuments();
+        } catch(err) {
+            console.log("[DB]: error getCurrentEscrowCount");
+            console.log(JSON.stringify(err));
+            return -1;
         }
     }
 
