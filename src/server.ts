@@ -30,6 +30,11 @@ const start = async () => {
         reply.code(200).send('I am alive!'); 
       });
 
+      console.log("setting allowed origins: *" );
+      fastify.register(require('fastify-cors'), { 
+        origin: "*"
+      });
+
       fastify.addHook('onRequest', (request, reply, done) => {
         
         if(request.headers.origin)
