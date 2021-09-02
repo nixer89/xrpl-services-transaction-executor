@@ -30,18 +30,12 @@ const start = async () => {
         reply.code(200).send('I am alive!'); 
       });
 
-      console.log("setting allowed origins: *" );
-      fastify.register(require('fastify-cors'), { 
-        origin: "*"
-      });
-
       fastify.addHook('onRequest', (request, reply, done) => {
         
         if(request.headers.origin)
           reply.code(500).send('Only calls from a backend are allowed');
         else
           done()
-        
       });
 
       console.log("declaring routes");
@@ -49,7 +43,7 @@ const start = async () => {
       console.log("finished declaring routes");
 
       try {
-        await fastify.listen(4021, '127.0.0.1');
+        await fastify.listen(4021, '0.0.0.0');
 
         console.log("http://localhost:4021/");
 

@@ -1,6 +1,6 @@
 {
   "name": "xumm-community-transaction-executor",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "executes XRPL timelocked escrows based on a database of escrows",
   "main": "src/server.ts",
   "scripts": {
@@ -23,7 +23,6 @@
     "console-stamp": "^0.2.10",
     "fastify": "^2.15.3",
     "fastify-compress": "^2.0.1",
-    "fastify-cors": "^6.0.2",
     "fastify-helmet": "^3.0.2",
     "https-proxy-agent": "^4.0.0",
     "mongodb": "^3.6.11",
