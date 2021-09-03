@@ -1,5 +1,8 @@
 import * as apiRoute from './api';
 import * as config from './util/config';
+require('console-stamp')(console, { 
+  format: ':date(yyyy-mm-dd HH:MM:ss) :label' 
+});
 
 const fastify = require('fastify')({
   trustProxy: config.USE_PROXY,
@@ -9,9 +12,6 @@ const fastify = require('fastify')({
     //file: '/home/ubuntu/fastify-logs/fastify.log' // Will use pino.destination()
   //}
 });
-
-import consoleStamp = require("console-stamp");
-consoleStamp(console, { pattern: 'yyyy-mm-dd HH:MM:ss' });
 
 console.log("adding response compression");
 fastify.register(require('fastify-compress'));

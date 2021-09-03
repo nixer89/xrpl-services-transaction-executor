@@ -1,8 +1,8 @@
-import { MongoClient, Collection, Cursor, DeleteWriteOpResultObject } from 'mongodb';
-import consoleStamp = require("console-stamp");
+import { MongoClient, Collection, DeleteWriteOpResultObject } from 'mongodb';
 import { EscrowFinish } from './util/types';
-
-consoleStamp(console, { pattern: 'yyyy-mm-dd HH:MM:ss' });
+require('console-stamp')(console, { 
+    format: ':date(yyyy-mm-dd HH:MM:ss) :label' 
+});
 
 export class DB {
     dbIp = process.env.DB_IP || "127.0.0.1"

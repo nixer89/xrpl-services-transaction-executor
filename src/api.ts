@@ -1,8 +1,9 @@
 import { EscrowExecutor } from './escrowExecutor';
 import { EscrowFinish } from './util/types';
 import { Encode } from 'xrpl-tagged-address-codec';
-import consoleStamp = require("console-stamp");
-consoleStamp(console, { pattern: 'yyyy-mm-dd HH:MM:ss' });
+require('console-stamp')(console, { 
+    format: ':date(yyyy-mm-dd HH:MM:ss) :label' 
+});
 
 export async function registerRoutes(fastify, opts, next) {
 

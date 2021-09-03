@@ -6,7 +6,9 @@ import { FormattedSubmitResponse } from 'ripple-lib/dist/npm/transaction/submit'
 import { DB } from './db';
 import { EscrowFinish } from './util/types';
 import * as config from './util/config';
-require('console-stamp')(console, { pattern: 'yyyy-mm-dd HH:MM:ss' });
+require('console-stamp')(console, { 
+    format: ':date(yyyy-mm-dd HH:MM:ss) :label' 
+});
 
 export class EscrowExecutor {
 
