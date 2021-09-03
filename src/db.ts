@@ -38,7 +38,7 @@ export class DB {
 
     async escrowExists(escrow: EscrowFinish): Promise<boolean> {
         try {
-            console.log("[DB]: getEscrow: " + JSON.stringify(escrow));
+            //console.log("[DB]: getEscrow: " + JSON.stringify(escrow));
             let mongoResult:EscrowFinish = await this.escrowFinishCollection.findOne({account: escrow.account, sequence: escrow.sequence, testnet: escrow.testnet});
 
             if(mongoResult && mongoResult.account == escrow.account && mongoResult.sequence == escrow.sequence && mongoResult.testnet == escrow.testnet)
@@ -53,7 +53,7 @@ export class DB {
 
     async getEscrowFinishByAccount(account: string, testnet: boolean): Promise<EscrowFinish[]> {
         try {
-            console.log("[DB]: getEscrowFinishByAccount: account: " + account);
+            //console.log("[DB]: getEscrowFinishByAccount: account: " + account);
             let mongoResult:EscrowFinish[] = await this.escrowFinishCollection.find({account: account, testnet: testnet}).sort({finishafter: -1}).toArray();
 
             if(mongoResult)
@@ -69,7 +69,7 @@ export class DB {
 
     async getEscrowFinishByDates(startDate:Date, endDate:Date): Promise<EscrowFinish[]> {
         try {
-            console.log("[DB]: getEscrowFinishByDates: startDate: " + startDate.toLocaleString() + " endDate: " + endDate.toLocaleString());
+            //console.log("[DB]: getEscrowFinishByDates: startDate: " + startDate.toLocaleString() + " endDate: " + endDate.toLocaleString());
             let mongoResult:EscrowFinish[] = await this.escrowFinishCollection.find({$and: [ {finishafter: {$gte: startDate}}, {finishafter: {$lt: endDate}}]}).sort({finishafter: -1}).toArray();
 
             if(mongoResult)
@@ -98,7 +98,7 @@ export class DB {
 
     async getNextOrLastEscrowRelease(sort: number): Promise<number> {
         try {
-            console.log("[DB]: getNextOrLastEscrowRelease");
+            //console.log("[DB]: getNextOrLastEscrowRelease");
             let mongoResult:EscrowFinish[] = await this.escrowFinishCollection.find().sort({finishafter: sort}).toArray();
 
             //console.log("result: " + JSON.stringify(mongoResult));
@@ -115,7 +115,7 @@ export class DB {
 
     async getCurrentEscrowCount(): Promise<number> {
         try {
-            console.log("[DB]: getCurrentEscrowCount");
+            //console.log("[DB]: getCurrentEscrowCount");
             return this.escrowFinishCollection.countDocuments();
         } catch(err) {
             console.log("[DB]: error getCurrentEscrowCount");

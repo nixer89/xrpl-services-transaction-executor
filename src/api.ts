@@ -11,19 +11,20 @@ export async function registerRoutes(fastify, opts, next) {
 
     fastify.post('/api/v1/escrowFinish', async (request, reply) => {
         //console.log("post payload headers: " + JSON.stringify(request.headers));
-        console.log("post body escrowFinish: " + request.body);
+        //console.log("post body escrowFinish: " + request.body);
         if(!request.body)
             return {success: false, error: true, message: "Please provide a body"};
         else {
-            let parsedBody:any = JSON.parse(request.body);
+            try {
+                let parsedBody:any = JSON.parse(request.body);
 
-            if(!parsedBody.account || !parsedBody.sequence || !parsedBody.finishafter || (!parsedBody.testnet && parsedBody.testnet != false))
-                return { success : false, error: true, message: "Post body incomplete. Please provide 'account', 'sequence', 'finishafter' and 'testnet' properties"};
-            else if(!isValidXRPAddress(parsedBody.account))
-                return { success : false, error: true, message: "Invalid XRP Ledger account address. Can not accept your request."};
-            else {
-                //try parsing the user agent when unknown to determine if web or app
-                try {
+                if(!parsedBody.account || !parsedBody.sequence || !parsedBody.finishafter || (!parsedBody.testnet && parsedBody.testnet != false))
+                    return { success : false, error: true, message: "Post body incomplete. Please provide 'account', 'sequence', 'finishafter' and 'testnet' properties"};
+                else if(!isValidXRPAddress(parsedBody.account))
+                    return { success : false, error: true, message: "Invalid XRP Ledger account address. Can not accept your request."};
+                else {
+                    //try parsing the user agent when unknown to determine if web or app
+                    
                     let escrowFinish:EscrowFinish = {
                         account: parsedBody.account,
                         sequence: parsedBody.sequence,
@@ -33,10 +34,11 @@ export async function registerRoutes(fastify, opts, next) {
                     
                     let result = await escrowExecutor.addNewEscrow(escrowFinish);
                     return { success: result.success, error: false }
-                    
-                } catch {
-                    return { success : false, error: true, message: 'Something went wrong. Could not save Escrow.'};
+                        
                 }
+            } catch (err) {
+                console.log("ERROR: " + JSON.stringify(err));
+                return { success : false, error: true, message: 'Something went wrong. Could not save Escrow.'};
             }
         }
     });
@@ -59,7 +61,8 @@ export async function registerRoutes(fastify, opts, next) {
 
                 let success:boolean = await escrowExecutor.deleteEscrow(escrowToDelete);
                 return { success: success, error: false }
-            } catch {
+            } catch (err) {
+                console.log("ERROR: " + JSON.stringify(err));
                 return { success : false, error: true, message: 'Something went wrong. Could not delete Escrow'};
             }
         }
@@ -83,7 +86,8 @@ export async function registerRoutes(fastify, opts, next) {
 
                 let exsists:boolean = await escrowExecutor.escrowExists(escrowToFind);
                 return { success: exsists, error: false }
-            } catch {
+            } catch(err) {
+                console.log("ERROR: " + JSON.stringify(err));
                 return { success : false, error: true, message: 'Escrow not found'};
             }
         }
@@ -109,8 +113,8 @@ export async function registerRoutes(fastify, opts, next) {
                         escrows: escrows,
                         error: false
                     };
-                } catch {
-                    console.log("ERROR");
+                } catch(err) {
+                    console.log("ERROR: " + JSON.stringify(err));
                     return { success : false, error: true, message: 'Something went wrong. Could not get Escrows.'};
                 }
             }
@@ -121,7 +125,8 @@ export async function registerRoutes(fastify, opts, next) {
         //console.log("stats/currentCount");
         try {
             return escrowExecutor.getCurrentEscrowCount();
-        } catch {
+        } catch(err) {
+            console.log("ERROR: " + JSON.stringify(err));
             return -1;
         }
     });
@@ -130,7 +135,8 @@ export async function registerRoutes(fastify, opts, next) {
         //console.log("stats/currentCount");
         try {
             return escrowExecutor.getNextOrLastEscrowRelease(1);
-        } catch {
+        } catch(err) {
+            console.log("ERROR: " + JSON.stringify(err));
             return -1;
         }
     });
@@ -139,7 +145,8 @@ export async function registerRoutes(fastify, opts, next) {
         //console.log("stats/currentCount");
         try {
             return escrowExecutor.getNextOrLastEscrowRelease(-1);
-        } catch {
+        } catch(err) {
+            console.log("ERROR: " + JSON.stringify(err));
             return -1;
         }
     });
