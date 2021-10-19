@@ -24,7 +24,6 @@
     "fastify": "^2.15.3",
     "fastify-compress": "^2.0.1",
     "fastify-helmet": "^3.0.2",
-    "https-proxy-agent": "^4.0.0",
     "mongodb": "^3.7.0",
     "node-schedule": "^1.3.3",
     "ripple-lib": "^1.10.0",

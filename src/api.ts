@@ -1,6 +1,7 @@
 import { EscrowExecutor } from './escrowExecutor';
 import { EscrowFinish } from './util/types';
 import { Encode } from 'xrpl-tagged-address-codec';
+
 require('console-stamp')(console, { 
     format: ':date(yyyy-mm-dd HH:MM:ss) :label' 
 });

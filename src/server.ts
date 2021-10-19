@@ -1,11 +1,10 @@
 import * as apiRoute from './api';
-import * as config from './util/config';
+
 require('console-stamp')(console, { 
   format: ':date(yyyy-mm-dd HH:MM:ss) :label' 
 });
 
 const fastify = require('fastify')({
-  trustProxy: config.USE_PROXY,
   //logger: {
     //level: 'warn',
     //level: 'info',

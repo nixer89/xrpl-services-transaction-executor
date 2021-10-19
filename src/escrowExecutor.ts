@@ -5,7 +5,7 @@ import { Prepare } from 'ripple-lib/dist/npm/transaction/types';
 import { FormattedSubmitResponse } from 'ripple-lib/dist/npm/transaction/submit';
 import { DB } from './db';
 import { EscrowFinish } from './util/types';
-import * as config from './util/config';
+
 require('console-stamp')(console, { 
     format: ':date(yyyy-mm-dd HH:MM:ss) :label' 
 });
@@ -18,17 +18,13 @@ export class EscrowExecutor {
     xrpl_secret:string = process.env.XRPL_SECRET || 'sskorjvv5bPtydsm5HtU1f2YxxA6D';
 
     api:RippleAPI;
-    api_test:RippleAPI = new RippleAPI({server: this.server_test, proxy: config.USE_PROXY ? config.PROXY_URL : null});
+    api_test:RippleAPI;
     db:DB = new DB();
 
     public async init() {
-        if(config.USE_PROXY) {
-            this.api = new RippleAPI({server: this.server, proxy: config.USE_PROXY ? config.PROXY_URL : null});
-            this.api_test = new RippleAPI({server: this.server_test, proxy: config.USE_PROXY ? config.PROXY_URL : null});
-        } else {
-            this.api = new RippleAPI({server: this.server});
-            this.api_test = new RippleAPI({server: this.server_test});
-        }
+    
+        this.api = new RippleAPI({server: this.server});
+        this.api_test = new RippleAPI({server: this.server_test});
         
         await this.db.initDb("escrowExecutor");
         await this.db.ensureIndexes();
