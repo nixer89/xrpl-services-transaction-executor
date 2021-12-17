@@ -12,7 +12,7 @@ require('console-stamp')(console, {
 
 export class EscrowExecutor {
 
-    server:string = 'wss://xrplcluster.com';
+    server:string = 'wss://s2.ripple.com';
     server_test:string ='wss://s.altnet.rippletest.net';
     xrpl_address:string = process.env.XRPL_ADDRESS || 'rpzR63sAd7fc4tR9c8k6MR3xhcZSpTAYKm';
     xrpl_secret:string = process.env.XRPL_SECRET || 'sskorjvv5bPtydsm5HtU1f2YxxA6D';
