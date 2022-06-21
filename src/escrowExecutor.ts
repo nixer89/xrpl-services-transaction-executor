@@ -12,8 +12,8 @@ require('console-stamp')(console, {
 
 export class EscrowExecutor {
 
-    server:string = 'wss://s2.ripple.com';
-    server_test:string ='wss://s.altnet.rippletest.net';
+    server:string = 'wss://hooks-testnet-v2.xrpl-labs.com';
+    server_test:string ='wss://hooks-testnet-v2.xrpl-labs.com';
     xrpl_address:string = process.env.XRPL_ADDRESS || 'rpzR63sAd7fc4tR9c8k6MR3xhcZSpTAYKm';
     xrpl_secret:string = process.env.XRPL_SECRET || 'sskorjvv5bPtydsm5HtU1f2YxxA6D';
 
@@ -26,7 +26,7 @@ export class EscrowExecutor {
         this.api = new RippleAPI({server: this.server});
         this.api_test = new RippleAPI({server: this.server_test});
         
-        await this.db.initDb("escrowExecutor");
+        await this.db.initDb("escrowExecutorhooksdevnet");
         await this.db.ensureIndexes();
         scheduler.scheduleJob({minute: 5}, () => this.loadEscrowsFromDbAndExecute());
     }

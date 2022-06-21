@@ -12,7 +12,7 @@ export class DB {
 
     async initDb(from: string): Promise<void> {
         console.log("init mongodb from: " + from);
-        this.escrowFinishCollection = await this.getNewDbModel("EscrowFinish");
+        this.escrowFinishCollection = await this.getNewDbModel("EscrowFinishHooksDevnet");
         
         return Promise.resolve();
     }
@@ -132,12 +132,12 @@ export class DB {
             connection.on('error', ()=>{ console.log("[DB]: Connection to MongoDB could NOT be established") });
         
             if(connection && connection.isConnected()) {
-                let existingCollections:Collection<any>[] = await connection.db('TransactionExecutor').collections();
+                let existingCollections:Collection<any>[] = await connection.db('TransactionExecutorHooksDevnet').collections();
                 //create collection if not exists
                 if(existingCollections.filter(collection => collection.collectionName === collectionName).length == 0)
-                    await connection.db('TransactionExecutor').createCollection(collectionName);
+                    await connection.db('TransactionExecutorHooksDevnet').createCollection(collectionName);
 
-                return connection.db('TransactionExecutor').collection(collectionName);
+                return connection.db('TransactionExecutorHooksDevnet').collection(collectionName);
             }
             else
                 return null;
