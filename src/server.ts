@@ -13,10 +13,10 @@ const fastify = require('fastify')({
 });
 
 console.log("adding response compression");
-fastify.register(require('fastify-compress'));
+fastify.register(require('@fastify/compress'));
 
 console.log("adding some security headers");
-fastify.register(require('fastify-helmet'));
+fastify.register(require('@fastify/helmet'));
 
 // Run the server!
 const start = async () => {
@@ -42,9 +42,9 @@ const start = async () => {
       console.log("finished declaring routes");
 
       try {
-        await fastify.listen(4444, '0.0.0.0');
+        await fastify.listen({port: 4444, host: '0.0.0.0'})
 
-        console.log("http://localhost:4444/");
+        console.log("http://localhost:4443/");
 
         fastify.ready(err => {
           if (err) throw err
