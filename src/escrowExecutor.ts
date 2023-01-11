@@ -28,7 +28,18 @@ export class EscrowExecutor {
         
         await this.db.initDb("escrowExecutor");
         await this.db.ensureIndexes();
+        scheduler.scheduleJob({minute: 0}, () => this.loadEscrowsFromDbAndExecute());
         scheduler.scheduleJob({minute: 5}, () => this.loadEscrowsFromDbAndExecute());
+        scheduler.scheduleJob({minute: 10}, () => this.loadEscrowsFromDbAndExecute());
+        scheduler.scheduleJob({minute: 15}, () => this.loadEscrowsFromDbAndExecute());
+        scheduler.scheduleJob({minute: 20}, () => this.loadEscrowsFromDbAndExecute());
+        scheduler.scheduleJob({minute: 25}, () => this.loadEscrowsFromDbAndExecute());
+        scheduler.scheduleJob({minute: 30}, () => this.loadEscrowsFromDbAndExecute());
+        scheduler.scheduleJob({minute: 35}, () => this.loadEscrowsFromDbAndExecute());
+        scheduler.scheduleJob({minute: 40}, () => this.loadEscrowsFromDbAndExecute());
+        scheduler.scheduleJob({minute: 45}, () => this.loadEscrowsFromDbAndExecute());
+        scheduler.scheduleJob({minute: 50}, () => this.loadEscrowsFromDbAndExecute());
+        scheduler.scheduleJob({minute: 55}, () => this.loadEscrowsFromDbAndExecute());
     }
 
     public async addNewEscrow(escrow: EscrowFinish): Promise<any> {
@@ -52,7 +63,7 @@ export class EscrowExecutor {
         let startDate:Date = new Date(0);
 
         let endDate:Date = new Date();
-        endDate.setMinutes(3, 59, 999);
+        endDate.setMinutes(endDate.getMinutes()-5);
 
         let escrows:EscrowFinish[] = await this.db.getEscrowFinishByDates(startDate, endDate);
 
