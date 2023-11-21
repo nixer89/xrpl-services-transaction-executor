@@ -10,11 +10,8 @@ const fastify = require('fastify')({
   //}
 });
 
-console.log("adding response compression");
-fastify.register(require('fastify-compress'));
-
 console.log("adding some security headers");
-fastify.register(require('fastify-helmet'));
+fastify.register(require('@fastify/helmet'));
 
 // Run the server!
 const start = async () => {
