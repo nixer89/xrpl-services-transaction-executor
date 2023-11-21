@@ -1,8 +1,6 @@
 import * as apiRoute from './api';
 
-require('console-stamp')(console, { 
-  format: ':date(yyyy-mm-dd HH:MM:ss) :label' 
-});
+require('log-timestamp');
 
 const fastify = require('fastify')({
   //logger: {
@@ -42,9 +40,9 @@ const start = async () => {
       console.log("finished declaring routes");
 
       try {
-        await fastify.listen(4021, '0.0.0.0');
+        await fastify.listen({port: 4421, host: '0.0.0.0'});
 
-        console.log("http://localhost:4021/");
+        console.log("http://localhost:4421/");
 
         fastify.ready(err => {
           if (err) throw err

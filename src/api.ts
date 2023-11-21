@@ -1,5 +1,5 @@
 import { EscrowExecutor } from './escrowExecutor';
-import { EscrowFinish } from './util/types';
+import { EscrowFinishDb } from './util/types';
 import { Encode } from 'xrpl-tagged-address-codec';
 
 require('console-stamp')(console, { 
@@ -27,7 +27,7 @@ export async function registerRoutes(fastify, opts, next) {
                 else {
                     //try parsing the user agent when unknown to determine if web or app
                     
-                    let escrowFinish:EscrowFinish = {
+                    let escrowFinish:EscrowFinishDb = {
                         account: parsedBody.account,
                         sequence: parsedBody.sequence,
                         finishafter: new Date(parsedBody.finishafter),
@@ -54,7 +54,7 @@ export async function registerRoutes(fastify, opts, next) {
         } else {
             //console.log("go on and delete");
             try {
-                let escrowToDelete:EscrowFinish = {
+                let escrowToDelete:EscrowFinishDb = {
                     account: request.params.account,
                     sequence: Number(request.params.sequence),
                     finishafter: null,
@@ -79,7 +79,7 @@ export async function registerRoutes(fastify, opts, next) {
         } else {
             //console.log("go on and delete");
             try {
-                let escrowToFind:EscrowFinish = {
+                let escrowToFind:EscrowFinishDb = {
                     account: request.params.account,
                     sequence: Number(request.params.sequence),
                     finishafter: null,
@@ -109,7 +109,7 @@ export async function registerRoutes(fastify, opts, next) {
             } else {
                 //console.log("get that data!");
                 try {
-                    let escrows:EscrowFinish[] = await escrowExecutor.getEscrowsForAccount(parsedBody.account, parsedBody.testnet);
+                    let escrows:EscrowFinishDb[] = await escrowExecutor.getEscrowsForAccount(parsedBody.account, parsedBody.testnet);
                     return {
                         success: true,
                         escrows: escrows,

@@ -1,7 +1,7 @@
 {
-  "name": "xumm-community-transaction-executor",
-  "version": "1.2.8",
-  "description": "executes XRPL timelocked escrows based on a database of escrows",
+  "name": "xahau-services-transaction-executor",
+  "version": "1.3.0",
+  "description": "executes Xahau Ledger timelocked escrows based on a database of escrows",
   "main": "src/server.ts",
   "scripts": {
     "start": "node dist/server.js",
@@ -11,30 +11,29 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nixer89/xumm-community-transaction-executor.git"
+    "url": "git+https://github.com/nixer89/xrpl-services-transaction-executor.git"
   },
   "author": "nixerFFM",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/nixer89/xumm-community-transaction-executor/issues"
+    "url": "https://github.com/nixer89/xrpl-services-transaction-executor/issues"
   },
-  "homepage": "https://github.com/nixer89/xumm-community-transaction-executor#readme",
+  "homepage": "https://github.com/nixer89/xrpl-services-transaction-executor#readme",
   "dependencies": {
-    "console-stamp": "^3.0.3",
-    "fastify": "^2.15.3",
-    "fastify-compress": "^2.0.1",
-    "fastify-helmet": "^3.0.2",
+    "@fastify/helmet": "^11.1.1",
+    "@transia/xrpl": "^2.7.3-alpha.19",
+    "fastify": "^4.24.3",
+    "log-timestamp": "^0.3.0",
     "mongodb": "^3.7.0",
-    "node-schedule": "^1.3.3",
-    "ripple-lib": "^1.10.0",
+    "node-schedule": "^2.1.1",
     "xrpl-tagged-address-codec": "^0.2.1"
   },
   "devDependencies": {
     "@types/mongodb": "^3.6.20",
-    "@types/node": "^13.13.52",
-    "@types/node-schedule": "^1.3.2",
-    "concurrently": "^5.3.0",
-    "nodemon": "^2.0.12",
-    "typescript": "^3.9.10"
+    "@types/node": "^20.9.3",
+    "@types/node-schedule": "^2.1.3",
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.0.1",
+    "typescript": "^5.3.2"
   }
 }

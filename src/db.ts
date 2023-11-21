@@ -1,5 +1,5 @@
 import { MongoClient, Collection, DeleteWriteOpResultObject } from 'mongodb';
-import { EscrowFinish } from './util/types';
+import { EscrowFinishDb } from './util/types';
 
 require('console-stamp')(console, { 
     format: ':date(yyyy-mm-dd HH:MM:ss) :label' 
@@ -8,7 +8,7 @@ require('console-stamp')(console, {
 export class DB {
     dbIp = process.env.DB_IP || "127.0.0.1"
 
-    escrowFinishCollection:Collection<EscrowFinish> = null;
+    escrowFinishCollection:Collection<EscrowFinishDb> = null;
 
     async initDb(from: string): Promise<void> {
         console.log("init mongodb from: " + from);
@@ -17,7 +17,7 @@ export class DB {
         return Promise.resolve();
     }
 
-    async saveEscrow(escrow: EscrowFinish): Promise<any> {
+    async saveEscrow(escrow: EscrowFinishDb): Promise<any> {
         console.log("[DB]: saveEscrow:" + " escrow: " + JSON.stringify(escrow));
         try {
             if((await this.escrowFinishCollection.find({account: escrow.account, sequence: escrow.sequence, testnet: escrow.testnet}).toArray()).length == 0) {
@@ -37,10 +37,10 @@ export class DB {
         }
     }
 
-    async escrowExists(escrow: EscrowFinish): Promise<boolean> {
+    async escrowExists(escrow: EscrowFinishDb): Promise<boolean> {
         try {
             //console.log("[DB]: getEscrow: " + JSON.stringify(escrow));
-            let mongoResult:EscrowFinish = await this.escrowFinishCollection.findOne({account: escrow.account, sequence: escrow.sequence, testnet: escrow.testnet});
+            let mongoResult:EscrowFinishDb = await this.escrowFinishCollection.findOne({account: escrow.account, sequence: escrow.sequence, testnet: escrow.testnet});
 
             if(mongoResult && mongoResult.account == escrow.account && mongoResult.sequence == escrow.sequence && mongoResult.testnet == escrow.testnet)
                 return Promise.resolve(true);
@@ -52,10 +52,10 @@ export class DB {
         }
     }
 
-    async getEscrowFinishByAccount(account: string, testnet: boolean): Promise<EscrowFinish[]> {
+    async getEscrowFinishByAccount(account: string, testnet: boolean): Promise<EscrowFinishDb[]> {
         try {
             //console.log("[DB]: getEscrowFinishByAccount: account: " + account);
-            let mongoResult:EscrowFinish[] = await this.escrowFinishCollection.find({account: account, testnet: testnet}).sort({finishafter: -1}).toArray();
+            let mongoResult:EscrowFinishDb[] = await this.escrowFinishCollection.find({account: account, testnet: testnet}).sort({finishafter: -1}).toArray();
 
             if(mongoResult)
                 return mongoResult;
@@ -68,10 +68,10 @@ export class DB {
         }
     }
 
-    async getEscrowFinishByDates(startDate:Date, endDate:Date): Promise<EscrowFinish[]> {
+    async getEscrowFinishByDates(startDate:Date, endDate:Date): Promise<EscrowFinishDb[]> {
         try {
             //console.log("[DB]: getEscrowFinishByDates: startDate: " + startDate.toLocaleString() + " endDate: " + endDate.toLocaleString());
-            let mongoResult:EscrowFinish[] = await this.escrowFinishCollection.find({$and: [ {finishafter: {$gte: startDate}}, {finishafter: {$lt: endDate}}]}).sort({finishafter: -1}).toArray();
+            let mongoResult:EscrowFinishDb[] = await this.escrowFinishCollection.find({$and: [ {finishafter: {$gte: startDate}}, {finishafter: {$lt: endDate}}]}).sort({finishafter: -1}).toArray();
 
             if(mongoResult)
                 return mongoResult;
@@ -100,7 +100,7 @@ export class DB {
     async getNextOrLastEscrowRelease(sort: number): Promise<number> {
         try {
             //console.log("[DB]: getNextOrLastEscrowRelease");
-            let mongoResult:EscrowFinish[] = await this.escrowFinishCollection.find().sort({finishafter: sort}).toArray();
+            let mongoResult:EscrowFinishDb[] = await this.escrowFinishCollection.find().sort({finishafter: sort}).toArray();
 
             //console.log("result: " + JSON.stringify(mongoResult));
             if(mongoResult && mongoResult.length > 0)
