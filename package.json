@@ -1,6 +1,6 @@
 {
   "name": "xahau-services-transaction-executor",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "executes Xahau Ledger timelocked escrows based on a database of escrows",
   "main": "src/server.ts",
   "scripts": {

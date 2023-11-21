@@ -129,13 +129,13 @@ export class DB {
             let connection:MongoClient = await MongoClient.connect('mongodb://'+this.dbIp+':27017', { useNewUrlParser: true, useUnifiedTopology: true });
             connection.on('error', ()=>{ console.log("[DB]: Connection to MongoDB could NOT be established") });
         
-            if(connection && connection.isConnected()) {
-                let existingCollections:Collection<any>[] = await connection.db('TransactionExecutor').collections();
+            if(connection) {
+                let existingCollections:Collection<any>[] = await connection.db('XahauTransactionExecutor').collections();
                 //create collection if not exists
                 if(existingCollections.filter(collection => collection.collectionName === collectionName).length == 0)
-                    await connection.db('TransactionExecutor').createCollection(collectionName);
+                    await connection.db('XahauTransactionExecutor').createCollection(collectionName);
 
-                return connection.db('TransactionExecutor').collection(collectionName);
+                return connection.db('XahauTransactionExecutor').collection(collectionName);
             }
             else
                 return null;
