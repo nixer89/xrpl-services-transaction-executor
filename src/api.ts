@@ -2,9 +2,7 @@ import { EscrowExecutor } from './escrowExecutor';
 import { EscrowFinishDb } from './util/types';
 import { Encode } from 'xrpl-tagged-address-codec';
 
-require('console-stamp')(console, { 
-    format: ':date(yyyy-mm-dd HH:MM:ss) :label' 
-});
+require('log-timestamp');
 
 export async function registerRoutes(fastify, opts, next) {
 
