@@ -1,5 +1,5 @@
 import { MongoClient, Collection, DeleteWriteOpResultObject } from 'mongodb';
-import { EscrowFinishDb } from './util/types';
+import { BurnTransactionDb, EscrowFinishDb } from './util/types';
 
 require('log-timestamp');
 
@@ -7,10 +7,12 @@ export class DB {
     dbIp = process.env.DB_IP || "127.0.0.1"
 
     escrowFinishCollection:Collection<EscrowFinishDb> = null;
+    burnTransactionCollection:Collection<BurnTransactionDb> = null;
 
     async initDb(from: string): Promise<void> {
         console.log("init mongodb from: " + from);
         this.escrowFinishCollection = await this.getNewDbModel("EscrowFinish");
+        this.burnTransactionCollection = await this.getNewDbModel("BurnTransaction");
         
         return Promise.resolve();
     }
@@ -50,7 +52,7 @@ export class DB {
         }
     }
 
-    async getEscrowFinishByAccount(account: string, testnet: boolean): Promise<EscrowFinishDb[]> {
+    async getEscrowFinishByAccount(account: string, testnet: boolean, xahau?: boolean): Promise<EscrowFinishDb[]> {
         try {
             //console.log("[DB]: getEscrowFinishByAccount: account: " + account);
             let mongoResult:EscrowFinishDb[] = await this.escrowFinishCollection.find({account: account, testnet: testnet}).sort({finishafter: -1}).toArray();
@@ -123,6 +125,78 @@ export class DB {
         }
     }
 
+    async saveBurnTransaction(burnTrx: BurnTransactionDb): Promise<any> {
+        console.log("[DB]: saveBurnTransaction:" + " burnTrx: " + JSON.stringify(burnTrx));
+        try {
+            if((await this.burnTransactionCollection.find({account: burnTrx.account, transactiontype: burnTrx.transactiontype, tx_hash: burnTrx.tx_hash, operationlimit: burnTrx.operationlimit}).toArray()).length == 0) {
+                let insertResponse = await this.burnTransactionCollection.insertOne(burnTrx);
+                if(insertResponse.insertedCount == 1 && insertResponse.insertedId)
+                    return {success: true};
+                else
+                    return {success: false};
+            } else {
+                console.log("burnTrx already in the system!");
+                return {success: true}; //Escrow already in system
+            }
+        } catch(err) {
+            console.log("[DB]: error saveBurnTransaction");
+            console.log(JSON.stringify(err));
+            return null;
+        }
+    }
+
+    async setBurnTrxAsImported(burnTrx: BurnTransactionDb): Promise<any> {
+        console.log("[DB]: saveBurnTransaction:" + " burnTrx: " + JSON.stringify(burnTrx));
+        try {
+            if((await this.burnTransactionCollection.find({account: burnTrx.account, transactiontype: burnTrx.transactiontype, tx_hash: burnTrx.tx_hash, operationlimit: burnTrx.operationlimit}).toArray()).length == 0) {
+                let updateResponse = await this.burnTransactionCollection.updateOne({account: burnTrx.account, transactiontype: burnTrx.transactiontype, tx_hash: burnTrx.tx_hash, operationlimit: burnTrx.operationlimit}, {imported: true});
+                if(updateResponse.upsertedCount == 1 && updateResponse.upsertedId)
+                    return {success: true};
+                else
+                    return {success: false};
+            } else {
+                console.log("burnTrx already in the system!");
+                return {success: true}; //Escrow already in system
+            }
+        } catch(err) {
+            console.log("[DB]: error saveBurnTransaction");
+            console.log(JSON.stringify(err));
+            return null;
+        }
+    }
+
+    async getNonImportedBurnTrxByAccount(account: string, operationlimit: number): Promise<BurnTransactionDb[]> {
+        try {
+            //console.log("[DB]: getEscrowFinishByAccount: account: " + account);
+            let mongoResult:BurnTransactionDb[] = await this.burnTransactionCollection.find({account: account, operationlimit: operationlimit, imported: false}).sort({operationlimit: -1}).toArray();
+
+            if(mongoResult)
+                return mongoResult;
+            else
+                return null;
+        } catch(err) {
+            console.log("[DB]: error getBurnTrxByAccount");
+            console.log(JSON.stringify(err));
+            return null;
+        }
+    }
+
+    async getBurnTrxByAccount(account: string, operationlimit: number): Promise<BurnTransactionDb[]> {
+        try {
+            //console.log("[DB]: getEscrowFinishByAccount: account: " + account);
+            let mongoResult:BurnTransactionDb[] = await this.burnTransactionCollection.find({account: account, operationlimit: operationlimit}).sort({operationlimit: -1}).toArray();
+
+            if(mongoResult)
+                return mongoResult;
+            else
+                return null;
+        } catch(err) {
+            console.log("[DB]: error getBurnTrxByAccount");
+            console.log(JSON.stringify(err));
+            return null;
+        }
+    }
+
     async getNewDbModel(collectionName: string): Promise<Collection<any>> {
         try {
             console.log("[DB]: connecting to mongo db with collection: " + collectionName +" and an schema");
@@ -130,12 +204,12 @@ export class DB {
             connection.on('error', ()=>{ console.log("[DB]: Connection to MongoDB could NOT be established") });
         
             if(connection) {
-                let existingCollections:Collection<any>[] = await connection.db('XahauTransactionExecutor').collections();
+                let existingCollections:Collection<any>[] = await connection.db('TransactionExecutor').collections();
                 //create collection if not exists
                 if(existingCollections.filter(collection => collection.collectionName === collectionName).length == 0)
-                    await connection.db('XahauTransactionExecutor').createCollection(collectionName);
+                    await connection.db('TransactionExecutor').createCollection(collectionName);
 
-                return connection.db('XahauTransactionExecutor').collection(collectionName);
+                return connection.db('TransactionExecutor').collection(collectionName);
             }
             else
                 return null;
@@ -152,8 +226,15 @@ export class DB {
             if((await this.escrowFinishCollection.indexes).length>0)
                 await this.escrowFinishCollection.dropIndexes();
 
+            if((await this.burnTransactionCollection.indexes).length>0)
+                await this.burnTransactionCollection.dropIndexes();
+
             await this.escrowFinishCollection.createIndex({account: -1});
             await this.escrowFinishCollection.createIndex({finishafter: -1});
+
+            await this.burnTransactionCollection.createIndex({account: -1});
+            await this.burnTransactionCollection.createIndex({transactiontype: -1});
+            await this.burnTransactionCollection.createIndex({fee: -1});
 
         } catch(err) {
             console.log("ERR creating indexes");
