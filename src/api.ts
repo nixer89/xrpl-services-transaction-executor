@@ -121,40 +121,6 @@ export async function registerRoutes(fastify, opts, next) {
         }
     });
 
-    fastify.post('/api/v1/burnTransaction', async (request, reply) => {
-        //console.log("post payload headers: " + JSON.stringify(request.headers));
-        //console.log("post body escrowFinish: " + request.body);
-        if(!request.body)
-            return {success: false, error: true, message: "Please provide a body"};
-        else {
-            try {
-                let parsedBody:any = JSON.parse(request.body);
-
-                if(!parsedBody.account || !parsedBody.transactiontype || !parsedBody.tx_hash || !parsedBody.fee || !parsedBody.networkid)
-                    return { success : false, error: true, message: "Post body incomplete. Please provide 'account', 'sequence', 'finishafter' and 'testnet' properties"};
-                else if(!isValidXRPAddress(parsedBody.account))
-                    return { success : false, error: true, message: "Invalid XRP Ledger account address. Can not accept your request."};
-                else {
-                    //try parsing the user agent when unknown to determine if web or app
-                    
-                    let escrowFinish:EscrowFinishDb = {
-                        account: parsedBody.account,
-                        sequence: parsedBody.sequence,
-                        finishafter: new Date(parsedBody.finishafter),
-                        testnet: parsedBody.testnet
-                    };
-                    
-                    let result = await escrowExecutor.addNewEscrow(escrowFinish);
-                    return { success: result.success, error: false }
-                        
-                }
-            } catch (err) {
-                console.log("ERROR: " + JSON.stringify(err));
-                return { success : false, error: true, message: 'Something went wrong. Could not save Escrow.'};
-            }
-        }
-    });
-
     fastify.get('/api/v1/stats/currentCount', async (request, reply) => {
         //console.log("stats/currentCount");
         try {

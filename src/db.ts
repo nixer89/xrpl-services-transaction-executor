@@ -12,7 +12,6 @@ export class DB {
     async initDb(from: string): Promise<void> {
         console.log("init mongodb from: " + from);
         this.escrowFinishCollection = await this.getNewDbModel("EscrowFinish");
-        this.burnTransactionCollection = await this.getNewDbModel("BurnTransaction");
         
         return Promise.resolve();
     }
@@ -122,78 +121,6 @@ export class DB {
             console.log("[DB]: error getCurrentEscrowCount");
             console.log(JSON.stringify(err));
             return -1;
-        }
-    }
-
-    async saveBurnTransaction(burnTrx: BurnTransactionDb): Promise<any> {
-        console.log("[DB]: saveBurnTransaction:" + " burnTrx: " + JSON.stringify(burnTrx));
-        try {
-            if((await this.burnTransactionCollection.find({account: burnTrx.account, transactiontype: burnTrx.transactiontype, tx_hash: burnTrx.tx_hash, operationlimit: burnTrx.operationlimit}).toArray()).length == 0) {
-                let insertResponse = await this.burnTransactionCollection.insertOne(burnTrx);
-                if(insertResponse.insertedCount == 1 && insertResponse.insertedId)
-                    return {success: true};
-                else
-                    return {success: false};
-            } else {
-                console.log("burnTrx already in the system!");
-                return {success: true}; //Escrow already in system
-            }
-        } catch(err) {
-            console.log("[DB]: error saveBurnTransaction");
-            console.log(JSON.stringify(err));
-            return null;
-        }
-    }
-
-    async setBurnTrxAsImported(burnTrx: BurnTransactionDb): Promise<any> {
-        console.log("[DB]: saveBurnTransaction:" + " burnTrx: " + JSON.stringify(burnTrx));
-        try {
-            if((await this.burnTransactionCollection.find({account: burnTrx.account, transactiontype: burnTrx.transactiontype, tx_hash: burnTrx.tx_hash, operationlimit: burnTrx.operationlimit}).toArray()).length == 0) {
-                let updateResponse = await this.burnTransactionCollection.updateOne({account: burnTrx.account, transactiontype: burnTrx.transactiontype, tx_hash: burnTrx.tx_hash, operationlimit: burnTrx.operationlimit}, {imported: true});
-                if(updateResponse.upsertedCount == 1 && updateResponse.upsertedId)
-                    return {success: true};
-                else
-                    return {success: false};
-            } else {
-                console.log("burnTrx already in the system!");
-                return {success: true}; //Escrow already in system
-            }
-        } catch(err) {
-            console.log("[DB]: error saveBurnTransaction");
-            console.log(JSON.stringify(err));
-            return null;
-        }
-    }
-
-    async getNonImportedBurnTrxByAccount(account: string, operationlimit: number): Promise<BurnTransactionDb[]> {
-        try {
-            //console.log("[DB]: getEscrowFinishByAccount: account: " + account);
-            let mongoResult:BurnTransactionDb[] = await this.burnTransactionCollection.find({account: account, operationlimit: operationlimit, imported: false}).sort({operationlimit: -1}).toArray();
-
-            if(mongoResult)
-                return mongoResult;
-            else
-                return null;
-        } catch(err) {
-            console.log("[DB]: error getBurnTrxByAccount");
-            console.log(JSON.stringify(err));
-            return null;
-        }
-    }
-
-    async getBurnTrxByAccount(account: string, operationlimit: number): Promise<BurnTransactionDb[]> {
-        try {
-            //console.log("[DB]: getEscrowFinishByAccount: account: " + account);
-            let mongoResult:BurnTransactionDb[] = await this.burnTransactionCollection.find({account: account, operationlimit: operationlimit}).sort({operationlimit: -1}).toArray();
-
-            if(mongoResult)
-                return mongoResult;
-            else
-                return null;
-        } catch(err) {
-            console.log("[DB]: error getBurnTrxByAccount");
-            console.log(JSON.stringify(err));
-            return null;
         }
     }
 

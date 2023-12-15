@@ -3,11 +3,11 @@ import * as apiRoute from './api';
 require('log-timestamp');
 
 const fastify = require('fastify')({
-  //logger: {
+  logger: {
     //level: 'warn',
-    //level: 'info',
-    //file: '/home/ubuntu/fastify-logs/fastify.log' // Will use pino.destination()
-  //}
+    level: 'info',
+    file: '/home/ubuntu/fastify-logs/fastify.log' // Will use pino.destination()
+  }
 });
 
 console.log("adding some security headers");
