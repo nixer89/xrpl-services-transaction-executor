@@ -1,5 +1,5 @@
 import * as scheduler from 'node-schedule';
-import { Client, EscrowFinish, Wallet } from 'xrpl';
+import { Client, EscrowFinish, Wallet } from '@transia/xrpl';
 import { DB } from './db';
 import { EscrowFinishDb } from './util/types';
 
@@ -7,8 +7,8 @@ require('log-timestamp');
 
 export class EscrowExecutor {
 
-    server:string = 'wss://s2.ripple.com';
-    server_test:string ='wss://s.altnet.rippletest.net';
+    server:string = 'wss://xahau.network';
+    server_test:string ='wss://xahau-test.net';
     xrpl_address:string = process.env.XRPL_ADDRESS || 'rpzR63sAd7fc4tR9c8k6MR3xhcZSpTAYKm';
     xrpl_secret:string = process.env.XRPL_SECRET || 'sskorjvv5bPtydsm5HtU1f2YxxA6D';
 
@@ -86,7 +86,8 @@ export class EscrowExecutor {
                 Account: this.xrpl_address,
                 OfferSequence: escrow.sequence,
                 Owner: escrow.account,
-                TransactionType: 'EscrowFinish'
+                TransactionType: 'EscrowFinish',
+                NetworkID: escrow.testnet ? 21338 : 21337
             }
 
             console.log("submitting escrowFinish transaction")
