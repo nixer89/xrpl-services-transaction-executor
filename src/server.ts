@@ -37,9 +37,9 @@ const start = async () => {
       console.log("finished declaring routes");
 
       try {
-        await fastify.listen({port: 4021, host: '0.0.0.0'});
+        await fastify.listen({port: 4421, host: '0.0.0.0'});
 
-        console.log("http://localhost:4021/");
+        console.log("http://localhost:4421/");
 
         fastify.ready(err => {
           if (err) throw err

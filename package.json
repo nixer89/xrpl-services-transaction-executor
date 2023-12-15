@@ -1,6 +1,6 @@
 {
   "name": "xahau-services-transaction-executor",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "executes XRPL Ledger timelocked escrows based on a database of escrows",
   "main": "src/server.ts",
   "scripts": {
