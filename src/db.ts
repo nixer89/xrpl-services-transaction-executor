@@ -1,5 +1,5 @@
 import { MongoClient, Collection, DeleteWriteOpResultObject } from 'mongodb';
-import { BurnTransactionDb, EscrowFinishDb } from './util/types';
+import { EscrowFinishDb } from './util/types';
 
 require('log-timestamp');
 
@@ -7,7 +7,6 @@ export class DB {
     dbIp = process.env.DB_IP || "127.0.0.1"
 
     escrowFinishCollection:Collection<EscrowFinishDb> = null;
-    burnTransactionCollection:Collection<BurnTransactionDb> = null;
 
     async initDb(from: string): Promise<void> {
         console.log("init mongodb from: " + from);
@@ -153,15 +152,8 @@ export class DB {
             if((await this.escrowFinishCollection.indexes).length>0)
                 await this.escrowFinishCollection.dropIndexes();
 
-            if((await this.burnTransactionCollection.indexes).length>0)
-                await this.burnTransactionCollection.dropIndexes();
-
             await this.escrowFinishCollection.createIndex({account: -1});
             await this.escrowFinishCollection.createIndex({finishafter: -1});
-
-            await this.burnTransactionCollection.createIndex({account: -1});
-            await this.burnTransactionCollection.createIndex({transactiontype: -1});
-            await this.burnTransactionCollection.createIndex({fee: -1});
 
         } catch(err) {
             console.log("ERR creating indexes");
