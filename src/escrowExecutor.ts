@@ -39,9 +39,9 @@ export class EscrowExecutor {
         scheduler.scheduleJob({minute: 50}, () => this.loadEscrowsFromDbAndExecute());
         scheduler.scheduleJob({minute: 55}, () => this.loadEscrowsFromDbAndExecute());
 
-        setTimeout(() => {
-            this.fetchEscrowsFromXrplAndInsertIntoDb();
-        });
+        //setTimeout(() => {
+        //    this.fetchEscrowsFromXrplAndInsertIntoDb();
+        //});
     }
 
     public async addNewEscrow(escrow: EscrowFinishDb): Promise<any> {
