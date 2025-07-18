@@ -130,6 +130,13 @@ export class EscrowExecutor {
             }
         } catch(err) {
             console.log(err);
+            if(escrow && escrow.testnet) {
+                console.log("Error executing escrow on testnet: " + JSON.stringify(err));
+                console.log("Skipping escrow on testnet!");
+
+                //return true to not retry on testnet
+                return Promise.resolve(true);
+            }
             return Promise.resolve(false);
         }
     }
@@ -193,7 +200,7 @@ export class EscrowExecutor {
                             escrowToInsert.account = escrowToInsert.account + "|" + JSON.stringify(transactionMemo);
                         }
 
-                        //await this.db.saveEscrow(escrowToInsert);
+                        await this.db.saveEscrow(escrowToInsert);
                         this.escrowsSaved++;
 
                         if(this.escrowsSaved % 100 === 0) {
