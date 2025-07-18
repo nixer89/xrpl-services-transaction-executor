@@ -1,7 +1,8 @@
 import * as scheduler from 'node-schedule';
-import { Client, EscrowFinish, Wallet } from 'xrpl';
+import { AccountObjectsRequest, Client, EscrowCreate, EscrowFinish, TransactionEntryRequest, TxRequest, Wallet, rippleTimeToISOTime } from 'xrpl';
 import { DB } from './db';
 import { EscrowFinishDb } from './util/types';
+import { Escrow } from 'xrpl/dist/npm/models/ledger';
 
 require('log-timestamp');
 
@@ -37,6 +38,10 @@ export class EscrowExecutor {
         scheduler.scheduleJob({minute: 45}, () => this.loadEscrowsFromDbAndExecute());
         scheduler.scheduleJob({minute: 50}, () => this.loadEscrowsFromDbAndExecute());
         scheduler.scheduleJob({minute: 55}, () => this.loadEscrowsFromDbAndExecute());
+
+        setTimeout(() => {
+            this.fetchEscrowsFromXrplAndInsertIntoDb();
+        });
     }
 
     public async addNewEscrow(escrow: EscrowFinishDb): Promise<any> {
@@ -81,12 +86,27 @@ export class EscrowExecutor {
 
             if(!apiToUse.isConnected())
                 await apiToUse.connect();
-            
+
+            let escrowAccount = "";
+            let escrowMemo = null;
+
+            if(escrow.account.includes("|")) {
+                escrowAccount = escrow.account.split("|")[0];
+                escrowMemo = escrow.account.split("|")[1];
+                console.log(escrowMemo);
+            } else {
+                escrowAccount = escrow.account;
+            }
+
             let escrowFinish:EscrowFinish = {
                 Account: this.xrpl_address,
                 OfferSequence: escrow.sequence,
-                Owner: escrow.account,
+                Owner: escrowAccount,
                 TransactionType: 'EscrowFinish'
+            }
+
+            if(escrowMemo) {
+                escrowFinish.Memos = JSON.parse(escrowMemo);
             }
 
             console.log("submitting escrowFinish transaction")
@@ -114,11 +134,85 @@ export class EscrowExecutor {
         }
     }
 
-    public getCurrentEscrowCount(): Promise<number> {
-        return this.db.getCurrentEscrowCount();
+    public async getCurrentEscrowCount(): Promise<number> {
+        return await this.db.getCurrentEscrowCount();
     }
 
-    public getNextOrLastEscrowRelease(sort: number): Promise<number> {
-        return this.db.getNextOrLastEscrowRelease(sort);
+    public async getNextOrLastEscrowRelease(sort: number): Promise<number> {
+        return await this.db.getNextOrLastEscrowRelease(sort);
+    }
+
+
+    escrowsSaved:number = 0;
+    private async fetchEscrowsFromXrplAndInsertIntoDb(marker?: string): Promise<void> {
+        try {
+            let accObjectsRequest:AccountObjectsRequest = {
+                command: 'account_objects',
+                account: "rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY",
+                ledger_index: 'validated',
+                limit: 1000,
+                marker: marker,
+                type: 'escrow'
+            };
+
+            if(!this.api.isConnected())
+                await this.api.connect();
+
+            let response = await this.api.request(accObjectsRequest);
+
+            if(response && response.result && Array.isArray(response.result.account_objects)) {
+                for(let i = 0; i < response.result.account_objects.length; i++) {
+                    let escrow:Escrow = response.result.account_objects[i] as Escrow;
+
+                    let requestTransaction:TxRequest = {
+                        command: 'tx',
+                        transaction: escrow.PreviousTxnID
+                    };
+
+                    let txResponse = await this.api.request(requestTransaction);
+
+                    if(txResponse && txResponse.result && txResponse.result.meta && typeof(txResponse.result.meta) == 'object' && txResponse.result.TransactionType === 'EscrowCreate') {
+                        // Successfully retrieved transaction
+                        let transactionSequence = txResponse.result.Sequence;
+                        let transactionMemo = txResponse.result.Memos;
+                        let destTag = txResponse.result.DestinationTag;
+
+                        if(destTag && destTag > 1) {
+                            console.log("Skipping escrow with destination tag: " + destTag + " | txHash: " + txResponse.result.hash);
+                            continue;
+                        }
+
+                        let escrowToInsert:EscrowFinishDb = {
+                            account: escrow.Account,
+                            sequence: transactionSequence,
+                            finishafter: new Date(rippleTimeToISOTime(escrow.FinishAfter)),
+                            testnet: false
+                        }
+
+                        if(transactionMemo) {
+                            escrowToInsert.account = escrowToInsert.account + "|" + JSON.stringify(transactionMemo);
+                        }
+
+                        //await this.db.saveEscrow(escrowToInsert);
+                        this.escrowsSaved++;
+
+                        if(this.escrowsSaved % 100 === 0) {
+                            console.log("Saved " + this.escrowsSaved + " escrows so far.");
+                        }
+                    }
+                }
+
+                if(response.result.marker) {
+                    // There are more objects to fetch
+                    marker = response.result.marker;
+                    await this.fetchEscrowsFromXrplAndInsertIntoDb(marker);
+                } else {
+                    console.log("Finished fetching escrows from XRPL. Total saved: " + this.escrowsSaved);
+                }
+            }
+        } catch(err) {
+            console.log(err);
+            console.log("Error fetching escrows from XRPL: " + JSON.stringify(err));
+        }
     }
 }
